@@ -1,0 +1,2 @@
+0 {{"msgType_":8,"securityId_":4749,"isin_":"GB00BYZN9041","currency_":"GBX"}}
+0 {{"msgType_":8,"securityId_":4749,"isin_":"GB00BYZN9041","currency_":"GBX"}}

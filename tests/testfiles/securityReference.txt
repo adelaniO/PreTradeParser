@@ -1,0 +1,2 @@
+0 {{"msgType_":8,"length_":36,"seqNo_":280},"security_":{"securityId_":4749,"umtf_":"FUTRl","isin_":"GB00BYZN9041","currency_":"GBX","mic_":"XLON","tickTableId_":33,"flags_":"{"b_":{"closingEnabled_":1,"testStock_":0,"illiquid":0,"live_":1,"aodEnabled_":1},"v_":25}}}
+0 {{"msgType_":8,"length_":36,"seqNo_":281},"security_":{"securityId_":4491,"umtf_":"BVCl","isin_":"IL0010849045","currency_":"GBX","mic_":"XLON","tickTableId_":32,"flags_":"{"b_":{"closingEnabled_":1,"testStock_":0,"illiquid":0,"live_":1,"aodEnabled_":1},"v_":25}}}

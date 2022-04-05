@@ -1,0 +1,6 @@
+0 {{"msgType_":8,"securityId_":4749,"isin_":"GB00BYZN9041","currency_":"GBX"}}
+
+0 {{"msgType_":12,"length_":25,"seqNo_":89431},"bookEntry_":{"securityId_":4749,"side_":BUY,"quantity_":1,"price_":50000000,"orderId_":343162}}
+0 {{"msgType_":12,"length_":25,"seqNo_":89432},"bookEntry_":{"securityId_":4749,"side_":BUY,"quantity_":2,"price_":10000000,"orderId_":343213}}
+0 {{"msgType_":12,"length_":25,"seqNo_":89433},"bookEntry_":{"securityId_":4749,"side_":BUY,"quantity_":4,"price_":20000000,"orderId_":343260}}
+0 {{"msgType_":12,"length_":25,"seqNo_":89434},"bookEntry_":{"securityId_":4749,"side_":BUY,"quantity_":4,"price_":10000000,"orderId_":343344}}
