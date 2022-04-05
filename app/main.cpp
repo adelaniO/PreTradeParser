@@ -18,21 +18,26 @@ int main(int argc, char** argv)
     std::cout << "Parsing: " << filePath.filename();
     Scanner scanner(filePath);
     scanner.scanSecurityReferenceData();
+    scanner.scanSecurityAddRecords();
     const fs::path destPath{ scanner.getDestPath() };
     std::ofstream dest{ destPath };
     if(dest.is_open())
     {
         scanner.printHeader(dest);
-        while (scanner.size())
+        for (auto& [id, security] : scanner)
         {
-            auto [id, security] = scanner.pop().value();
-            scanner.scanSecurityAddRecord(id, security);
+            scanner.finalizeSecurity(security);
             scanner.printSecurity(dest, security);
         }
     }
     else
     {
         std::cerr << "Unable to open destination file path: " << destPath << '\n';
+    }
+
+    for(const auto& err : scanner.getErrors().geterrors())
+    {
+        std::cerr << err << '\n';
     }
 
     return 0;

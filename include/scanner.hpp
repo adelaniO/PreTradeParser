@@ -56,18 +56,25 @@ namespace pretrade
     public:
         Scanner(const fs::path& source);
         void scanSecurityReferenceData();
-        void scanSecurityAddRecord(int64_t id, Security& security);
+        void scanSecurityAddRecords();
         void printHeader(std::ostream& dest);
-        void printSecurity(std::ostream& dest, Security& security);
+        void finalizeSecurity(Security& security); // For testing
+        void printSecurity(std::ostream& dest, const Security& security);
         const ErrorLog& getErrors() const;
         size_t size() const;
-        std::optional<std::pair<int64_t, Security>> pop();
         const fs::path& getDestPath() { return m_dest; }
-    private:
+
+        // convenience functions
+        auto find(int64_t id) { return m_securities.find(id); }
+        const auto find(int64_t id) const { return m_securities.find(id); }
+        auto begin() { return m_securities.begin(); }
+        const auto begin() const { return m_securities.cbegin(); }
+        auto end() { return m_securities.end(); }
+        const auto end() const { return m_securities.cend(); }
     private:
         int m_msgCount{};
         fs::path m_source, m_dest;
-        std::queue<std::pair<int64_t, Security>> m_securities;
+        std::unordered_map<int64_t, Security> m_securities;
         ErrorLog m_errors;
     };
 

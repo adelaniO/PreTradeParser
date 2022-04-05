@@ -37,7 +37,7 @@ namespace pretrade
                     
                     if (auto id{ getIntValue(TokenType::SECURITY_ID, line) })
                     {
-                        auto& [newId, security] = m_securities.emplace(id.value(), Security{});
+                        Security security;
                         const auto isin{ getStringValue(TokenType::ISIN, line) };
                         if (!isin || isin.value().size() != 12)
                             m_errors.add("Invalid ISIN for Security Id: " + std::to_string(id.value()));
@@ -49,6 +49,9 @@ namespace pretrade
                             m_errors.add("Invalid Currency for Security Id: " + std::to_string(id.value()));
                         else
                             currency->copy(security.currency.data(), 3);
+                        const auto& [iter, success] = m_securities.emplace(id.value(), security);
+                        if(success)
+                            m_errors.add("Duplicate Reference Found for Security Id: " + std::to_string(id.value()));
                     }
                 }
             }
@@ -59,7 +62,7 @@ namespace pretrade
         }
     }
 
-    void Scanner::scanSecurityAddRecord(int64_t id, Security& security)
+    void Scanner::scanSecurityAddRecords()
     {
         std::ifstream source{m_source};
 
@@ -77,8 +80,12 @@ namespace pretrade
             {
                 if(auto type{getIntValue(TokenType::MSG_TYPE, line)}; type.value() == 12)
                 {
-                    if (auto idSearch{ getIntValue(TokenType::SECURITY_ID, line) }; idSearch.value() == id)
+                    if (auto idSearch{ getIntValue(TokenType::SECURITY_ID, line) })
                     {
+                        auto search{ m_securities.find(*idSearch) };
+                        if(search == m_securities.end())
+                            continue;
+                        auto& [id, security] = *search;
                         const auto quantity = getIntValue(TokenType::QUANTITY, line);
                         const auto price = getIntValue(TokenType::PRICE, line);
                         const auto side{ getStringValue(TokenType::SIDE, line)};
@@ -102,9 +109,6 @@ namespace pretrade
                 }
             }
         }
-
-        security.averageBuy /= security.quantityBuy ? security.quantityBuy : 1;
-        security.averageSell /= security.quantitySell ? security.quantitySell : 1;
     }
 
     void Scanner::printHeader(std::ostream& dest)
@@ -112,7 +116,13 @@ namespace pretrade
         dest << "ISIN\tCurrency\tTotal Buy Count\tTotal Sell Count\tTotal Buy Quantity\tTotal Sell Quantity\tWeighted Average Buy Price\tWeighted Average Sell Price\tMax Buy Price\tMin Sell Price\n";
     }
 
-    void Scanner::printSecurity(std::ostream& dest, Security& security)
+    void Scanner::finalizeSecurity(Security& security)
+    {
+        security.averageBuy /= security.quantityBuy ? security.quantityBuy : 1;
+        security.averageSell /= security.quantitySell ? security.quantitySell : 1;
+    }
+
+    void Scanner::printSecurity(std::ostream& dest, const Security& security)
     {
         dest << std::string(security.isin.begin(), security.isin.end()) << '\t';
         dest << std::string(security.currency.begin(), security.currency.end()) << '\t';
@@ -129,14 +139,6 @@ namespace pretrade
     size_t Scanner::size() const
     {
         return m_securities.size();
-    }
-
-    std::optional<std::pair<int64_t, Security>> Scanner::pop()
-    {
-        if (m_securities.empty()) return std::nullopt;
-        auto result = std::make_optional(m_securities.front());
-        m_securities.pop();
-        return result;
     }
 
     const ErrorLog& Scanner::getErrors() const
